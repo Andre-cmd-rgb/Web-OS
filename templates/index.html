@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebTerminal OS</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Star OS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <div id="terminal"></div>
-  <script src="kernel.js"></script>
+  <script src="{{ url_for('static', filename='kernel.js') }}"></script>
+  <script type="module" src="/static/kernel.js"></script>
 </body>
 </html>
