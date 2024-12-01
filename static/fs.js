@@ -21,7 +21,7 @@ class FileSystem {
       });
     }
   
-    // Helper method to interact with the database
+    // Method to interact with the database
     async performTransaction(storeName, operation, mode = "readonly") {
       return new Promise((resolve, reject) => {
         const transaction = this.db.transaction(storeName, mode);
@@ -36,7 +36,7 @@ class FileSystem {
     // Create a directory
     async createDirectory(path) {
       if (path.startsWith("/")) {
-        path = path.slice(1); // Remove leading slash for storage
+        path = path.slice(1); // Remove slash for storage
       }
   
       const existingEntry = await this.performTransaction(this.storeName, (store) => store.get(path));
@@ -51,7 +51,7 @@ class FileSystem {
     // Create a file
     async createFile(path, data) {
       if (path.startsWith("/")) {
-        path = path.slice(1); // Remove leading slash for storage
+        path = path.slice(1); // Remove slash for storage
       }
   
       const existingEntry = await this.performTransaction(this.storeName, (store) => store.get(path));

@@ -140,7 +140,6 @@ class CommandHistory {
     }
   });
   
-  // Example usage to save command (assuming `command` is a variable holding the current command)
   async function saveCommand(command) {
     await historyManager.saveCommandToHistory(command);
   }

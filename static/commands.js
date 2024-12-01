@@ -1,4 +1,4 @@
-// commands.js
+// commands
 
 export const commands = {
     help(terminal) {

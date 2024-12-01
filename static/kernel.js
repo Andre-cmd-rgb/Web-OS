@@ -1,6 +1,6 @@
 import FileSystem from './fs.js';
 import CommandHistoryManager from './history.js'; 
-import { commands } from './commands.js'; // Import the commands
+import { commands } from './commands.js';
 
 class StarOS {
   constructor(terminalElement) {
