@@ -1,5 +1,5 @@
 class CommandHistory {
-    constructor(dbName = "StarOSCommandHistory", storeName = "history") {
+    constructor(dbName = "WebOSCommandHistory", storeName = "history") {
       this.dbName = dbName;
       this.storeName = storeName;
       this.db = null;

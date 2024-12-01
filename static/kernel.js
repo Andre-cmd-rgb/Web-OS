@@ -19,7 +19,7 @@ class StarOS {
       await this.fileSystem.createDirectory("root");
     } catch (error) {}
 
-    this.print("Welcome to Star OS!");
+    this.print("Welcome to Web OS!");
     this.print("Type 'help' for a list of commands.");
     this.newPrompt();
     this.setupInputListener();

@@ -1,6 +1,6 @@
 class FileSystem {
     constructor() {
-      this.dbName = "StarOSFileSystem";
+      this.dbName = "WebOSFileSystem";
       this.storeName = "FileSystemStore";
       this.init();
     }
