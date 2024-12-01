@@ -25,15 +25,34 @@ class StarOS {
     this.setupInputListener();
   }
 
+  newPrompt() {
+    const promptLine = document.createElement("div");
+    promptLine.classList.add("prompt-line");
+    promptLine.innerHTML = `${this.prompt}<span id="input-line" contenteditable="true"></span>`;
+    this.terminal.appendChild(promptLine);
+  
+    const inputLine = document.querySelector("#input-line");
+    inputLine.focus();
+  
+    // Ensure caret is placed at the end
+    const range = document.createRange();
+    range.selectNodeContents(inputLine);
+    range.collapse(false);
+  
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  
+    this.scrollTerminal();
+  }
+  
   setupInputListener() {
     document.addEventListener("keydown", async (event) => {
       const inputElement = document.querySelector("#input-line");
       if (!inputElement) return;
   
-      // Allow native clipboard operations
-      if ((event.ctrlKey || event.metaKey) && (event.key === "c" || event.key === "v")) {
-        return;
-      }
+      // Allow native text and caret behavior
+      if (event.ctrlKey || event.metaKey) return;
   
       switch (event.key) {
         case "Enter":
@@ -45,23 +64,17 @@ class StarOS {
           inputElement.removeAttribute("id");
           this.newPrompt();
           break;
-        case "Backspace":
-          event.preventDefault();
-          inputElement.textContent = inputElement.textContent.slice(0, -1);
-          break;
         case "ArrowUp":
         case "ArrowDown":
           this.commandHistoryManager.handleArrowKeyNavigation(event, inputElement);
           break;
         default:
-          if (event.key.length === 1) {
-            event.preventDefault();
-            inputElement.textContent += event.key;
-          }
+          // Allow normal text entry and caret movement
+          break;
       }
     });
   
-    // Handle paste event explicitly
+    // Handle paste event
     document.addEventListener("paste", (event) => {
       const inputElement = document.querySelector("#input-line");
       if (!inputElement) return;
@@ -80,7 +93,8 @@ class StarOS {
       selection.removeAllRanges();
       selection.addRange(range);
     });
-  }  
+  }
+    
 
   async processCommand(command) {
     if (!command) return;
@@ -101,17 +115,6 @@ class StarOS {
     this.print(`Unknown command: ${cmd}`);
   }
 
-  newPrompt() {
-    const promptLine = document.createElement("div");
-    promptLine.classList.add("prompt-line");
-    promptLine.innerHTML = `${this.prompt}<span id="input-line" contenteditable="true"></span>`;
-    this.terminal.appendChild(promptLine);
-
-    const inputLine = document.querySelector("#input-line");
-    inputLine.focus();
-
-    this.scrollTerminal();
-  }
 
   print(text) {
     const outputLine = document.createElement("div");

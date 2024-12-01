@@ -1,11 +1,24 @@
 // commands
 
 export const commands = {
-    help(terminal) {
-      terminal.print(
-        "Available commands: help, mkdir [name], touch [name], ls, cat [name], rm [name], clear, cd [dir], cd .., add [file] [content]"
-      );
-    },
+  help(terminal) {
+    terminal.print(`
+      <strong>Available Commands:</strong>
+      <ul>
+        <li><strong>help</strong>: Displays this list of commands.</li>
+        <li><strong>mkdir [name]</strong>: Creates a new directory named <em>[name]</em>.</li>
+        <li><strong>touch [name]</strong>: Creates a new empty file named <em>[name]</em>.</li>
+        <li><strong>add [file] [content]</strong>: Appends <em>[content]</em> to the file <em>[file]</em>. Creates a new line for the content.</li>
+        <li><strong>ls</strong>: Lists the contents of the current directory.</li>
+        <li><strong>cat [name]</strong>: Displays the content of the file <em>[name]</em>. If the file is Markdown (<em>.md</em>), it is rendered with basic formatting.</li>
+        <li><strong>rm [name]</strong>: Deletes the file or directory <em>[name]</em>.</li>
+        <li><strong>clear</strong>/<strong>cls</strong>: Clears the terminal screen.</li>
+        <li><strong>cd [dir]</strong>: Changes the current directory to <em>[dir]</em>.</li>
+        <li><strong>cd ..</strong>: Moves up to the parent directory.</li>
+        <li><strong>wget [url] [filename]</strong>: Fetches the content from the specified <em>[url]</em> and saves it to a file named <em>[filename]</em>.</li>
+      </ul>
+    `);
+  },  
   
     async mkdir(terminal, args) {
       if (args.length < 1) throw new Error("Usage: mkdir [name]");
@@ -51,11 +64,33 @@ export const commands = {
   
     async cat(terminal, args) {
       if (args.length < 1) throw new Error("Usage: cat [name]");
-      const data = await terminal.fileSystem.readFile(terminal._getFullPath(args[0]));
-      const formattedData = data.replace(/\n/g, "<br>");
-      terminal.print(formattedData);
+      const filePath = terminal._getFullPath(args[0]);
+      const fileExists = await terminal._checkIfPathExists(filePath);
+    
+      if (!fileExists) throw new Error("File does not exist");
+    
+      const data = await terminal.fileSystem.readFile(filePath);
+    
+      // Check if file ends with `.md`
+      if (args[0].endsWith(".md")) {
+        const rendered = data
+          .replace(/^# (.+)/gm, "<h1>$1</h1>") // Render # Header
+          .replace(/^## (.+)/gm, "<h2>$1</h2>") // Render ## Header
+          .replace(/^### (.+)/gm, "<h3>$1</h3>") // Render ### Header
+          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") // Render **bold**
+          .replace(/\*(.+?)\*/g, "<em>$1</em>") // Render *italic*
+          .replace(/!\[(.*?)\]\((.+?)\)/g, '<img alt="$1" src="$2" />') // Render ![alt](url)
+          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>') // Render [text](url)
+          .replace(/\n/g, "<br>"); // Replace newlines with <br> for display
+    
+        terminal.print(rendered);
+      } else {
+        // For plain text files, preserve line breaks
+        const formattedData = data.replace(/\n/g, "<br>");
+        terminal.print(formattedData);
+      }
     },
-  
+
     async rm(terminal, args) {
       if (args.length < 1) throw new Error("Usage: rm [name]");
       await terminal.fileSystem.deleteEntry(terminal._getFullPath(args[0]));
@@ -63,6 +98,9 @@ export const commands = {
     },
   
     clear(terminal) {
+      terminal.clearScreen();
+    },
+    cls(terminal) {
       terminal.clearScreen();
     },
     async wget(terminal, args) {
