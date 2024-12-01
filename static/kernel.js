@@ -29,7 +29,12 @@ class StarOS {
     document.addEventListener("keydown", async (event) => {
       const inputElement = document.querySelector("#input-line");
       if (!inputElement) return;
-
+  
+      // Allow native clipboard operations
+      if ((event.ctrlKey || event.metaKey) && (event.key === "c" || event.key === "v")) {
+        return;
+      }
+  
       switch (event.key) {
         case "Enter":
           event.preventDefault();
@@ -55,7 +60,27 @@ class StarOS {
           }
       }
     });
-  }
+  
+    // Handle paste event explicitly
+    document.addEventListener("paste", (event) => {
+      const inputElement = document.querySelector("#input-line");
+      if (!inputElement) return;
+  
+      event.preventDefault();
+      const pastedText = event.clipboardData.getData("text");
+      const currentText = inputElement.textContent;
+      inputElement.textContent = currentText + pastedText;
+  
+      // Move caret to the end of the new text
+      const range = document.createRange();
+      range.selectNodeContents(inputElement);
+      range.collapse(false);
+  
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
+  }  
 
   async processCommand(command) {
     if (!command) return;

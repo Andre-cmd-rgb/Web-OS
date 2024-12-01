@@ -65,7 +65,33 @@ export const commands = {
     clear(terminal) {
       terminal.clearScreen();
     },
+    async wget(terminal, args) {
+      if (args.length < 2) throw new Error("Usage: wget [url] [filename]");
+      const url = args[0];
+      const fileName = args[1];
+      const filePath = terminal._getFullPath(fileName);
   
+      // Check if the file already exists
+      const fileExists = await terminal._checkIfPathExists(filePath);
+      if (fileExists) throw new Error("File already exists");
+  
+      try {
+        terminal.print(`Fetching content from '${url}'...`);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
+        }
+        const content = await response.text();
+  
+        // Save the content to the file system
+        await terminal.fileSystem.createFile(filePath, content);
+        await terminal._updateParentDirectory(filePath);
+  
+        terminal.print(`Content from '${url}' saved to '${fileName}'.`);
+      } catch (error) {
+        terminal.print(`Error: ${error.message}`);
+      }
+    },
     async cd(terminal, args) {
       if (args.length < 1) throw new Error("Usage: cd [dir]");
       if (args[0] === "..") {
