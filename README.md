@@ -4,7 +4,7 @@ A basic working operating system implemented in JavaScript. This project simulat
 
 # Screenshots 📸
 
-![Web OS Screenshot](https://github.com/user-attachments/assets/c550fe2f-92bf-43c1-bb14-8813f4828cb7)
+![Screenshot](https://cloud-n2pq4h0o8-hack-club-bot.vercel.app/0_9794308f-cc50-43be-b5da-f19fc35d46de_.png)
 
 ## Features ✨
 
