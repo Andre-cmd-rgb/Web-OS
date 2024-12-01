@@ -16,9 +16,10 @@ export const commands = {
         <li><strong>cd [dir]</strong>: Changes the current directory to <em>[dir]</em>.</li>
         <li><strong>cd ..</strong>: Moves up to the parent directory.</li>
         <li><strong>wget [url] [filename]</strong>: Fetches the content from the specified <em>[url]</em> and saves it to a file named <em>[filename]</em>.</li>
+        <li><strong>clone [repo-url] [optional-directory-name]</strong>: Clones the GitHub repository from the specified <em>[repo-url]</em> into an optional directory name.</li>
       </ul>
     `);
-  },  
+  },   
   
     async mkdir(terminal, args) {
       if (args.length < 1) throw new Error("Usage: mkdir [name]");
