@@ -2,4 +2,4 @@
  
 basic working os in js
 
-![{EA8DAA6E-E5A5-4816-9C8C-B32490EC2AF3}](https://github.com/user-attachments/assets/667bf67c-2a59-4f67-8252-90155363a6a5)
+![{CA1CDFF7-D50D-40CB-B954-D56AFC58C511}](https://github.com/user-attachments/assets/c550fe2f-92bf-43c1-bb14-8813f4828cb7)
