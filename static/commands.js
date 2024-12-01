@@ -130,6 +130,69 @@ export const commands = {
         terminal.print(`Error: ${error.message}`);
       }
     },
+    async clone(terminal, args) {
+      if (args.length < 1) throw new Error("Usage: clone [repo-url] [optional-directory-name]");
+    
+      const repoUrl = args[0].replace(/^['"]|['"]$/g, ""); // Remove quotes
+      const repoName = args[1] || repoUrl.split('/').pop().replace('.git', '');
+      const targetPath = terminal._getFullPath(repoName);
+    
+      const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+      if (!match) throw new Error("Invalid GitHub repository URL.");
+    
+      const [_, owner, repo] = match;
+    
+      const metadataUrl = `https://api.github.com/repos/${owner}/${repo}`;
+      try {
+        terminal.print(`Cloning repository '${repoUrl}'...`);
+    
+        // Fetch repository metadata
+        const metadataResponse = await fetch(metadataUrl);
+        if (!metadataResponse.ok) {
+          throw new Error(`Failed to fetch repository metadata: ${metadataResponse.status}`);
+        }
+    
+        const metadata = await metadataResponse.json();
+        const branch = metadata.default_branch || "main";
+    
+        // Fetch repository tree
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch repository: ${response.status} ${response.statusText}`);
+        }
+    
+        const repoData = await response.json();
+        if (!repoData.tree) throw new Error("Failed to retrieve repository structure.");
+    
+        // Create root directory
+        await terminal.fileSystem.createDirectory(targetPath);
+        await terminal._updateParentDirectory(targetPath);
+    
+        // Save repository files
+        for (const item of repoData.tree) {
+          const itemPath = `${targetPath}/${item.path}`;
+          if (item.type === "tree") {
+            await terminal.fileSystem.createDirectory(itemPath);
+            await terminal._updateParentDirectory(itemPath);
+            terminal.print(`Created directory: ${item.path}`);
+          } else if (item.type === "blob") {
+            const fileResponse = await fetch(item.url, {
+              headers: { Accept: "application/vnd.github.v3.raw" },
+            });
+            if (!fileResponse.ok) throw new Error(`Failed to fetch file: ${item.path}`);
+            const fileContent = await fileResponse.text();
+            await terminal.fileSystem.createFile(itemPath, fileContent);
+            await terminal._updateParentDirectory(itemPath);
+            terminal.print(`Fetched file: ${item.path}`);
+          }
+        }
+    
+        terminal.print(`Repository '${repoUrl}' cloned into '${repoName}'.`);
+      } catch (error) {
+        terminal.print(`Error: ${error.message}`);
+      }
+    },       
     async cd(terminal, args) {
       if (args.length < 1) throw new Error("Usage: cd [dir]");
       if (args[0] === "..") {
