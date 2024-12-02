@@ -30,7 +30,26 @@ export const commands = {
       await terminal._updateParentDirectory(dirPath);
       terminal.print(`Directory '${args[0]}' created.`);
     },
-  
+    async run(terminal, args) {
+      if (args.length < 1) throw new Error("Usage: run [file]");
+      const filePath = terminal._getFullPath(args[0]);
+      terminal.print(`Trying to run file at path: ${filePath}`); // Debugging line
+      const fileExists = await terminal._checkIfPathExists(filePath);
+      if (!fileExists) {
+        terminal.print(`Error: File '${filePath}' not found.`);
+        return;
+      }
+    
+      try {
+        terminal.print(`Running script '${args[0]}'...`);
+        const data = await terminal.fileSystem.readFile(filePath);
+        eval(data);  // Run the script
+        //terminal.print(data);
+        terminal.print(`Script '${args[0]}' executed successfully.`);
+      } catch (error) {
+        terminal.print(`Error: ${error.message}`);
+      }
+    },    
     async touch(terminal, args) {
       if (args.length < 1) throw new Error("Usage: touch [name]");
       const filePath = terminal._getFullPath(args[0]);
