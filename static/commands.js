@@ -43,13 +43,26 @@ export const commands = {
       try {
         terminal.print(`Running script '${args[0]}'...`);
         const data = await terminal.fileSystem.readFile(filePath);
-        eval(data);  // Run the script
-        //terminal.print(data);
+    
+        // Create a context for the script with access to `print`
+        const scriptContext = {
+          print: (message) => terminal.print(message),
+        };
+    
+        // Use Function constructor to execute the script in the provided context
+        const scriptFunction = new Function("context", `
+          with (context) {
+            ${data}
+          }
+        `);
+    
+        scriptFunction(scriptContext);
+    
         terminal.print(`Script '${args[0]}' executed successfully.`);
       } catch (error) {
         terminal.print(`Error: ${error.message}`);
       }
-    },    
+    },       
     async touch(terminal, args) {
       if (args.length < 1) throw new Error("Usage: touch [name]");
       const filePath = terminal._getFullPath(args[0]);
@@ -124,32 +137,45 @@ export const commands = {
       terminal.clearScreen();
     },
     async wget(terminal, args) {
-      if (args.length < 2) throw new Error("Usage: wget [url] [filename]");
-      const url = args[0];
-      const fileName = args[1];
+      // Validate arguments
+      if (args.length < 2) {
+          throw new Error("Usage: wget [url] [filename]");
+      }
+  
+      const url = args[0].trim();
+      const fileName = args[1].trim();
       const filePath = terminal._getFullPath(fileName);
   
       // Check if the file already exists
       const fileExists = await terminal._checkIfPathExists(filePath);
-      if (fileExists) throw new Error("File already exists");
+      if (fileExists) {
+          terminal.print(`Error: File '${fileName}' already exists.`);
+          return;
+      }
   
       try {
-        terminal.print(`Fetching content from '${url}'...`);
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
-        }
-        const content = await response.text();
+          terminal.print(`Fetching content from '${url}'...`);
   
-        // Save the content to the file system
-        await terminal.fileSystem.createFile(filePath, content);
-        await terminal._updateParentDirectory(filePath);
+          // Fetch the URL content
+          const response = await fetch(url);
+          if (!response.ok) {
+              throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
+          }
   
-        terminal.print(`Content from '${url}' saved to '${fileName}'.`);
+          const content = await response.text();
+          if (!content.trim()) {
+              throw new Error(`The fetched content from '${url}' is empty.`);
+          }
+  
+          // Save the content to the file system
+          await terminal.fileSystem.createFile(filePath, content);
+          await terminal._updateParentDirectory(filePath);
+  
+          terminal.print(`Content from '${url}' saved to '${fileName}'.`);
       } catch (error) {
-        terminal.print(`Error: ${error.message}`);
+          terminal.print(`Error: ${error.message}`);
       }
-    },
+  },  
     async clone(terminal, args) {
       if (args.length < 1) throw new Error("Usage: clone [repo-url] [optional-directory-name]");
     
