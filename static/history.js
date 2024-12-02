@@ -10,13 +10,12 @@ class CommandHistory {
       this.init();
     }
   
-    // Initialize IndexedDB and create the object store if it doesn't exist
     async init() {
       this.db = await this.openDB();
       await this.loadHistory();
     }
   
-    // Open the IndexedDB and create object store if needed
+    // Open the db and create object store if needed
     async openDB() {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open(this.dbName, 1);
@@ -39,7 +38,7 @@ class CommandHistory {
       });
     }
   
-    // Load command history from IndexedDB
+    // Load command history from db
     async loadHistory() {
       const transaction = this.db.transaction([this.storeName], "readonly");
       const store = transaction.objectStore(this.storeName);
@@ -55,7 +54,7 @@ class CommandHistory {
       };
     }
   
-    // Save the command to IndexedDB
+    // Save the command to db
     async saveCommand(command) {
       const transaction = this.db.transaction([this.storeName], "readwrite");
       const store = transaction.objectStore(this.storeName);
@@ -64,7 +63,7 @@ class CommandHistory {
       const request = store.add(commandData);
       
       request.onsuccess = () => {
-        this.history.push(command); // Update in-memory history after saving to DB
+        this.history.push(command); // Update in-memory history after saving to db
         this.historyIndex = this.history.length;
       };
       
@@ -91,7 +90,7 @@ class CommandHistory {
       return null;
     }
   
-    // Manually set the history index (useful for arrow key navigation)
+    // Manually set the history index (for arrow key navigation)
     setHistoryIndex(index) {
       this.historyIndex = index;
     }
@@ -102,7 +101,7 @@ class CommandHistory {
     }
   }
   
-  // Example usage of CommandHistory class in StarOS:
+
   export default class CommandHistoryManager {
     constructor() {
       this.history = new CommandHistory();
