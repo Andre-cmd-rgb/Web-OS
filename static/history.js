@@ -1,3 +1,5 @@
+//commands history
+
 class CommandHistory {
     constructor(dbName = "WebOSCommandHistory", storeName = "history") {
       this.dbName = dbName;

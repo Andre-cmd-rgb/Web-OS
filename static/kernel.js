@@ -74,7 +74,6 @@ class StarOS {
       }
     });
   
-    // Handle paste event
     document.addEventListener("paste", (event) => {
       const inputElement = document.querySelector("#input-line");
       if (!inputElement) return;
