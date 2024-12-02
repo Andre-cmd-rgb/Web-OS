@@ -1,3 +1,5 @@
+
+terminal.print('ded')
 import { printColored } from './terminalGraphics.js';
 
 printColored('Hello, this is a red message!', 'red');
