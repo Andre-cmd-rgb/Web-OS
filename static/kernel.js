@@ -32,6 +32,12 @@ newPrompt() {
   this.terminal.appendChild(promptLine);
 
   const inputLine = document.querySelector("#input-line");
+
+  // Set attributes to disable mobile autocorrect and capitalization
+  inputLine.setAttribute("spellcheck", "false");
+  inputLine.setAttribute("autocapitalize", "none");
+  inputLine.setAttribute("autocomplete", "off");
+  inputLine.setAttribute("autocorrect", "off");
   inputLine.focus();
 
   // Ensure caret is placed at the end
