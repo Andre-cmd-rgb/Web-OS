@@ -5,25 +5,61 @@ body {
   color: lime;
   font-family: monospace;
   font-size: 16px;
+  overflow: hidden;
 }
 
 #terminal {
   padding: 10px;
   height: 100vh;
   overflow-y: auto;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  scrollbar-width: thin;
+  scrollbar-color: lime black;
 }
 
-#input-line {
-  outline: none;
-  display: inline;
-  caret-color: lime;
+#terminal::-webkit-scrollbar {
+  width: 8px;
+}
+
+#terminal::-webkit-scrollbar-thumb {
+  background-color: lime;
+}
+
+#terminal::-webkit-scrollbar-track {
+  background-color: black;
 }
 
 .prompt-line {
   display: flex;
   align-items: baseline;
+  margin-bottom: 4px;
+}
+
+#input-line {
+  outline: none;
+  display: inline-block;
+  caret-color: lime;
+  min-height: 1.4em;
+  flex-grow: 1;
+  -webkit-user-modify: read-write-plaintext-only;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 #input-line:focus {
   outline: none;
+}
+
+@media (max-width: 768px) {
+  #terminal {
+    font-size: 14px;
+    padding: 5px;
+  }
+
+  #input-line {
+    font-size: 14px;
+    min-height: 1.6em;
+  }
 }
