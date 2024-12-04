@@ -25,76 +25,82 @@ class StarOS {
     this.setupInputListener();
   }
 
-  newPrompt() {
-    const promptLine = document.createElement("div");
-    promptLine.classList.add("prompt-line");
-    promptLine.innerHTML = `${this.prompt}<span id="input-line" contenteditable="true"></span>`;
-    this.terminal.appendChild(promptLine);
+newPrompt() {
+  const promptLine = document.createElement("div");
+  promptLine.classList.add("prompt-line");
+  promptLine.innerHTML = `${this.prompt}<span id="input-line" contenteditable="true"></span>`;
+  this.terminal.appendChild(promptLine);
+
+  const inputLine = document.querySelector("#input-line");
+  inputLine.focus();
+
+  // Ensure caret is placed at the end
+  const range = document.createRange();
+  range.selectNodeContents(inputLine);
+  range.collapse(false);
+
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  // Allow touch devices to focus input on tap
+  inputLine.addEventListener("touchstart", () => inputLine.focus());
+
+  this.scrollTerminal();
+}
   
-    const inputLine = document.querySelector("#input-line");
-    inputLine.focus();
-  
-    // Ensure caret is placed at the end
+  setupInputListener() {
+  document.addEventListener("keydown", async (event) => {
+    const inputElement = document.querySelector("#input-line");
+    if (!inputElement) return;
+
+    if (event.ctrlKey || event.metaKey) return;
+
+    switch (event.key) {
+      case "Enter":
+        event.preventDefault();
+        const command = inputElement.textContent.trim();
+        await this.processCommand(command);
+        await this.commandHistoryManager.saveCommandToHistory(command);
+        inputElement.removeAttribute("contenteditable");
+        inputElement.removeAttribute("id");
+        this.newPrompt();
+        break;
+      case "ArrowUp":
+      case "ArrowDown":
+        this.commandHistoryManager.handleArrowKeyNavigation(event, inputElement);
+        break;
+      default:
+        break;
+    }
+  });
+
+  // Allow touch events to paste text on mobile
+  document.addEventListener("paste", (event) => {
+    const inputElement = document.querySelector("#input-line");
+    if (!inputElement) return;
+
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData("text");
+    const currentText = inputElement.textContent;
+    inputElement.textContent = currentText + pastedText;
+
+    // Move caret to the end of the new text
     const range = document.createRange();
-    range.selectNodeContents(inputLine);
+    range.selectNodeContents(inputElement);
     range.collapse(false);
-  
+
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-  
-    this.scrollTerminal();
-  }
-  
-  setupInputListener() {
-    document.addEventListener("keydown", async (event) => {
-      const inputElement = document.querySelector("#input-line");
-      if (!inputElement) return;
-  
-      // Allow native text and caret behavior
-      if (event.ctrlKey || event.metaKey) return;
-  
-      switch (event.key) {
-        case "Enter":
-          event.preventDefault();
-          const command = inputElement.textContent.trim();
-          await this.processCommand(command);
-          await this.commandHistoryManager.saveCommandToHistory(command);
-          inputElement.removeAttribute("contenteditable");
-          inputElement.removeAttribute("id");
-          this.newPrompt();
-          break;
-        case "ArrowUp":
-        case "ArrowDown":
-          this.commandHistoryManager.handleArrowKeyNavigation(event, inputElement);
-          break;
-        default:
-          // Allow normal text entry and caret movement
-          break;
-      }
-    });
-  
-    document.addEventListener("paste", (event) => {
-      const inputElement = document.querySelector("#input-line");
-      if (!inputElement) return;
-  
-      event.preventDefault();
-      const pastedText = event.clipboardData.getData("text");
-      const currentText = inputElement.textContent;
-      inputElement.textContent = currentText + pastedText;
-  
-      // Move caret to the end of the new text
-      const range = document.createRange();
-      range.selectNodeContents(inputElement);
-      range.collapse(false);
-  
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-    });
-  }
-    
+  });
 
+  // Touch-friendly focus activation
+  this.terminal.addEventListener("touchstart", () => {
+    const inputElement = document.querySelector("#input-line");
+    if (inputElement) inputElement.focus();
+  });
+}
   async processCommand(command) {
     if (!command) return;
 
