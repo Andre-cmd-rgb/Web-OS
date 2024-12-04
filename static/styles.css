@@ -12,6 +12,7 @@ body {
   padding: 10px;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden; /* Disable horizontal scrolling */
   box-sizing: border-box;
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -44,8 +45,9 @@ body {
   min-height: 1.4em;
   flex-grow: 1;
   -webkit-user-modify: read-write-plaintext-only;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: pre-wrap; /* Wrap text properly */
+  word-wrap: break-word; /* Break long words to avoid overflow */
+  overflow-wrap: break-word; /* Handle text wrapping in all browsers */
 }
 
 #input-line:focus {
