@@ -21,7 +21,7 @@ class FileSystem {
       });
     }
   
-    // Method to interact with the database
+    // db
     async performTransaction(storeName, operation, mode = "readonly") {
       return new Promise((resolve, reject) => {
         const transaction = this.db.transaction(storeName, mode);
@@ -33,10 +33,10 @@ class FileSystem {
       });
     }
   
-    // Create a directory
+    // dir
     async createDirectory(path) {
       if (path.startsWith("/")) {
-        path = path.slice(1); // Remove slash for storage
+        path = path.slice(1); // fix
       }
   
       const existingEntry = await this.performTransaction(this.storeName, (store) => store.get(path));
@@ -48,10 +48,10 @@ class FileSystem {
       await this.performTransaction(this.storeName, (store) => store.add(entry), "readwrite");
     }
   
-    // Create a file
+    //  a file
     async createFile(path, data) {
       if (path.startsWith("/")) {
-        path = path.slice(1); // Remove slash for storage
+        path = path.slice(1); // fix
       }
   
       const existingEntry = await this.performTransaction(this.storeName, (store) => store.get(path));
@@ -73,7 +73,7 @@ class FileSystem {
       await this.performTransaction(this.storeName, (store) => store.add(entry), "readwrite");
     }
   
-    // Write (update) file content
+    // Write file
     async writeFile(path, data) {
       const entry = await this.performTransaction(this.storeName, (store) => store.get(path));
       if (!entry || entry.type !== "file") {
