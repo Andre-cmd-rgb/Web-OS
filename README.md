@@ -1,5 +1,6 @@
 # Web OS 💻
-Ai was used in this project(github copilot and chat gpt to help me edit readme)
+DISCLAIMER!!! Ai was used in this project(github copilot to code and chat gpt to help me edit readme!)
+
 A basic working operating system implemented in JavaScript. This project to create a terminal-based OS, where users can interact with a file system, execute commands, and manage directories and files through the web interface. 🚀
 
 # Screenshots 📸
