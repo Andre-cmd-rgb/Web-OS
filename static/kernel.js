@@ -33,14 +33,14 @@ newPrompt() {
 
   const inputLine = document.querySelector("#input-line");
 
-  // Set attributes to disable mobile autocorrect and capitalization
+  // get out autocorrect
   inputLine.setAttribute("spellcheck", "false");
   inputLine.setAttribute("autocapitalize", "none");
   inputLine.setAttribute("autocomplete", "off");
   inputLine.setAttribute("autocorrect", "off");
   inputLine.focus();
 
-  // Ensure caret is placed at the end
+  // fix
   const range = document.createRange();
   range.selectNodeContents(inputLine);
   range.collapse(false);
@@ -49,7 +49,7 @@ newPrompt() {
   selection.removeAllRanges();
   selection.addRange(range);
 
-  // Allow touch devices to focus input on tap
+  // focus input on tap
   inputLine.addEventListener("touchstart", () => inputLine.focus());
 
   this.scrollTerminal();
@@ -81,7 +81,7 @@ newPrompt() {
     }
   });
 
-  // Allow touch events to paste text on mobile
+  // pastep
   document.addEventListener("paste", (event) => {
     const inputElement = document.querySelector("#input-line");
     if (!inputElement) return;
@@ -91,7 +91,7 @@ newPrompt() {
     const currentText = inputElement.textContent;
     inputElement.textContent = currentText + pastedText;
 
-    // Move caret to the end of the new text
+    // end
     const range = document.createRange();
     range.selectNodeContents(inputElement);
     range.collapse(false);
@@ -101,7 +101,7 @@ newPrompt() {
     selection.addRange(range);
   });
 
-  // Touch-friendly focus activation
+  //  focus
   this.terminal.addEventListener("touchstart", () => {
     const inputElement = document.querySelector("#input-line");
     if (inputElement) inputElement.focus();
