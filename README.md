@@ -16,7 +16,7 @@ The following commands are available in this OS:
 - `help`: Displays a list of available commands. 
 - `mkdir [name]`: Creates a new directory. 
 - `touch [name]`: Creates a new empty file. 
-- `add [file] [content]`: Adds content to an existing file. ✏
+- `add [file] [content]`: Adds content to an existing file. 
 - `ls`: Lists contents of the current directory. 
 - `cat [name]`: Displays the contents of a file. 
 - `rm [name]`: Deletes a file or directory. 
